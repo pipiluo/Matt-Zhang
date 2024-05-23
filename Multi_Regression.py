@@ -46,7 +46,7 @@ class RegressioninputCheck:
             warnings.warn("""Warining! This method may cooupy huge memory space, which may lead 'Out of Memory' error. 
       Therefore, please process youre data in advance when executing the regression method (use numpy array), and
       setting `batch_check=False`.""", UserWarning)
-            self.strain_variable, _ = self.array_bacth_check(
+            self.strain_variable, _ = self.array_batch_check(
                 self.strain_variable)
             self.independent_variable, self.multiple_num_list = self.array_batch_check(
                 self.independent_variable)
@@ -95,14 +95,13 @@ class RegressioninputCheck:
             self.independent_variable = np.expand_dims(
                 self.independent_variable, axis=0)
             self.dim_s_v_length = len(self.strain_variable.shape)
-            self.dim_i_v_length = len(self.strain_variable.shape)
+            self.dim_i_v_length = len(self.independent_variable.shape)
 
         return self.strain_variable, self.independent_variable
 
 
 def regression(strain_variable, independent_variable, with_constant=False, batch_check=False, confidence_level=0.95):
-    data_object = RegressioninputCheck(
-        strain_variable, independent_variable, batch_check)
+    data_object = RegressioninputCheck(strain_variable, independent_variable, batch_check)
     multiple_num_list = np.expand_dims(data_object.multiple_num_list, axis=-1)
     strain_variable, independent_variable = data_object.check_logic()
 
@@ -129,8 +128,7 @@ def regression(strain_variable, independent_variable, with_constant=False, batch
     s_v = strain_variable
 
     # Getting regression coefficient
-    coeff = np.matmul(np.matmul(np.linalg.inv(
-        np.matmul(i_v_t, i_v)), i_v_t), s_v)
+    coeff = np.matmul(np.matmul(np.linalg.inv(np.matmul(i_v_t, i_v)), i_v_t), s_v)
 
     # Getting the residuals
     epsilon = s_v - np.matmul(i_v, coeff)
